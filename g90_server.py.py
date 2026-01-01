@@ -11,9 +11,9 @@ if script_dir not in sys.path:
 try:
     from PyFT8.cycle_manager import Cycle_manager
     from PyFT8.sigspecs import FT8
-    print("✅ MOTORE PyFT8 CARICATO CON SUCCESSO")
+    print("MOTORE PyFT8 CARICATO CON SUCCESSO")
 except ImportError:
-    print("❌ ERRORE: Cartella PyFT8 non trovata nello script path!")
+    print("ERRORE: Cartella PyFT8 non trovata nello script path!")
 
 app = Flask(__name__)
 # Usiamo async_mode='threading' per evitare conflitti con i calcoli FFT
@@ -59,14 +59,14 @@ def run_audio_engine():
     try:
         Cycle_manager(FT8, on_decode_callback, onOccupancy=None, input_device_keywords=kw)
     except Exception as e:
-        print(f"❌ Errore Decoder: {e}")
+        print(f"Errore Decoder: {e}")
 
 # --- LOGICA WATERFALL (OTTIMIZZATA PER FLUIDITÀ) ---
 def run_waterfall():
     pa = pyaudio.PyAudio()
     try:
         stream = pa.open(format=pyaudio.paInt16, channels=1, rate=FS, input=True, frames_per_buffer=CHUNK)
-        print("🌊 Waterfall in ascolto...")
+        print("Waterfall in ascolto...")
         while True:
             raw = stream.read(CHUNK, exception_on_overflow=False)
             data = np.frombuffer(raw, dtype=np.int16)
@@ -83,7 +83,7 @@ def run_waterfall():
             time.sleep(0.05)
             
     except Exception as e:
-        print(f"❌ Errore Waterfall: {e}")
+        print(f"Errore Waterfall: {e}")
 
 @app.route('/')
 def index():
@@ -94,6 +94,7 @@ if __name__ == '__main__':
     threading.Thread(target=run_audio_engine, daemon=True).start()
     threading.Thread(target=run_waterfall, daemon=True).start()
     
-    print("🚀 Server IZ7ZKR avviato!")
-    print("🔗 Apri il browser su: http://localhost:5000")
+    print("Server avviato!")
+    print("Apri il browser su: http://localhost:5000")
+
     socketio.run(app, host='0.0.0.0', port=5000)
